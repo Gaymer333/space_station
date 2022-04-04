@@ -2,6 +2,8 @@ import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, 
 import { sceneNames } from './scenes'
 import _ from 'lodash'
 import { DeepPartial } from './types'
+import { getEventsBetweenTimesInMinutes, getTimeFromTimeInMinutes, getTimeInMinutes, Time } from './funktions/time'
+import { GameEvent } from './funktions/event'
 
 interface Stat {
 	stateKey: statKeys,
@@ -17,12 +19,6 @@ export interface PlayerData {
 	stats: Array<Stat>
 }
 
-interface Time {
-	days: number,
-	hours: number,
-	mins: number
-}
-
 export interface GlobalStateInterface {
 	meta: {
 		gameStarted: boolean
@@ -35,7 +31,7 @@ export interface GlobalStateInterface {
 		money: number
 	},
 	player: PlayerData,
-	events: Array<Event>,
+	events: Array<GameEvent>,
 	stateUpdatedAt: Date
 }
 
@@ -48,18 +44,13 @@ export enum statActions {
 	'subtract',
 }
 
-interface StatChange {
+export interface StatChange {
 	statKey: statKeys,
 	action: statActions,
 	value: number
 }
 
-interface Event {
-	timeInMinutes: number,
-	change: Array<StatChange>
-}
-
-const _defaultGlobalState: GlobalStateInterface = {
+const getDefaultGlobalState = (): GlobalStateInterface => ({
 	meta: {
 		gameStarted: false
 	},
@@ -74,7 +65,15 @@ const _defaultGlobalState: GlobalStateInterface = {
 	inventory: {
 		money: 200
 	},
-	events: [],
+	events: [{
+		type: 'repeatingHourly',
+		minuteInTheHour: 0,
+		changes: [{
+			statKey: statKeys.alcohol,
+			action: statActions.subtract,
+			value: 10
+		}]
+	}],
 	player: {
 		firstname: 'Max',
 		lastname: 'Power',
@@ -89,13 +88,7 @@ const _defaultGlobalState: GlobalStateInterface = {
 		]
 	},
 	stateUpdatedAt: new Date()
-}
-
-const defaultGlobalState = { ..._defaultGlobalState }
-
-const getDateInMinutes = (value: Time) => {
-	return value.mins + value.hours * 60 + value.days * 1440
-}
+})
 
 interface GlobalStateHandlerInterface {
 	state: GlobalStateInterface,
@@ -112,10 +105,10 @@ const initiateGlobalState = () => {
 	const localGlobalStateString = localStorage.getItem('GlobalState')
 	if (localGlobalStateString) {
 		const localGlobalState = JSON.parse(localGlobalStateString) as Partial<GlobalStateInterface>
-		const test = _.merge({ ...defaultGlobalState }, localGlobalState)
+		const test = _.merge(getDefaultGlobalState(), localGlobalState)
 		return test
 	}
-	return { ...defaultGlobalState }
+	return getDefaultGlobalState()
 }
 
 const GlobalStateContext = createContext<GlobalStateHandlerInterface | undefined>(undefined)
@@ -134,18 +127,8 @@ const GlobalStateProvider = ({
 		_setState((prevState) => ({ ...prevState, ...newGlobalState }))
 	}
 
-	const addMins = (mins: number) => {
-		const newDateAsMinutes = (getDateInMinutes(state.time) + mins) % 10080
-		const minutesLeftAfterDays = newDateAsMinutes % 1440
-		const newDays = Math.floor(newDateAsMinutes / 1440)
-		const newHours = Math.floor(minutesLeftAfterDays / 60)
-		const newMins = minutesLeftAfterDays % 60
-
-		updateState({ time: { days: newDays, hours: newHours, mins: newMins } })
-	}
-
 	const resetGame = () => {
-		updateState(defaultGlobalState)
+		updateState(getDefaultGlobalState())
 	}
 
 	const updateScene = (scene: sceneNames) => {
@@ -181,6 +164,22 @@ const GlobalStateProvider = ({
 		default:
 			throw new Error('Unknown statActions')
 		}
+	}
+
+	const addMins = (mins: number) => {
+		const oldTimeInMinutes = getTimeInMinutes(state.time)
+
+		const newTime = getTimeFromTimeInMinutes(oldTimeInMinutes + mins)
+
+		const gameEvents = getEventsBetweenTimesInMinutes(oldTimeInMinutes, getTimeInMinutes(newTime), state.events)
+
+		for (const gameEvent of gameEvents) {
+			for (const change of gameEvent.changes) {
+				changeStat(change)
+			}
+		}
+
+		updateState({ time: newTime })
 	}
 
 	const contextValue = {

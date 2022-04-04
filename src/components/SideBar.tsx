@@ -19,6 +19,8 @@ const SideBar = () => {
 			{alcohol.currentValue ? <p>Alcohol: {alcohol.currentValue} / {alcohol.maxValue}</p> : undefined}
 			<hr />
 			<button onClick={() => addMins(15)} >Wait 15 mins</button>
+			<button onClick={() => addMins(60)} >Wait 1 hour</button>
+			<button onClick={() => addMins(600)} >Wait 10 hour</button>
 			<hr />
 		</div>
 		<div>
