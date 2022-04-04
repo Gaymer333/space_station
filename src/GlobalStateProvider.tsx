@@ -35,7 +35,8 @@ export interface GlobalStateInterface {
 		money: number
 	},
 	player: PlayerData,
-	events: Array<Event>
+	events: Array<Event>,
+	stateUpdatedAt: Date
 }
 
 export enum statKeys {
@@ -47,7 +48,7 @@ export enum statActions {
 	'subtract',
 }
 
-interface StateChange {
+interface StatChange {
 	statKey: statKeys,
 	action: statActions,
 	value: number
@@ -55,7 +56,7 @@ interface StateChange {
 
 interface Event {
 	timeInMinutes: number,
-	change: Array<StateChange>
+	change: Array<StatChange>
 }
 
 const _defaultGlobalState: GlobalStateInterface = {
@@ -86,42 +87,52 @@ const _defaultGlobalState: GlobalStateInterface = {
 				maxValue: 100
 			}
 		]
-	}
+	},
+	stateUpdatedAt: new Date()
 }
 
 const defaultGlobalState = { ..._defaultGlobalState }
-
-const GlobalStateContext = createContext({
-	state: {} as GlobalStateInterface,
-	setState: {} as Dispatch<SetStateAction<GlobalStateInterface>>,
-	updateScene: {} as (scene: sceneNames) => void,
-	updatePlayer: {} as (playerData: Partial<PlayerData>) => void,
-	resetGame: {} as () => void,
-	addMins: {} as (mins: number) => void,
-	getStat: {} as (statKey: statKeys) => Stat,
-	changeState: {} as (change: StateChange) => void
-})
 
 const getDateInMinutes = (value: Time) => {
 	return value.mins + value.hours * 60 + value.days * 1440
 }
 
+interface GlobalStateHandlerInterface {
+	state: GlobalStateInterface,
+	updateState: (newState: DeepPartial<GlobalStateInterface>) => void,
+	updateScene: (scene: sceneNames) => void,
+	updatePlayer: (player: Partial<PlayerData>) => void,
+	resetGame: () => void,
+	addMins: (mins: number) => void,
+	getStat: (statKey: statKeys) => Stat,
+	changeStat: (change: StatChange) => void
+}
+
+const initiateGlobalState = () => {
+	const localGlobalStateString = localStorage.getItem('GlobalState')
+	if (localGlobalStateString) {
+		const localGlobalState = JSON.parse(localGlobalStateString) as Partial<GlobalStateInterface>
+		const test = _.merge({ ...defaultGlobalState }, localGlobalState)
+		return test
+	}
+	return { ...defaultGlobalState }
+}
+
+const GlobalStateContext = createContext<GlobalStateHandlerInterface | undefined>(undefined)
+
 const GlobalStateProvider = ({
-	children,
-	value = {} as GlobalStateInterface
+	children
 }: {
 	children: React.ReactNode;
-	value: GlobalStateInterface;
 }) => {
-	const [state, setState] = useState(value)
+	const [state, _setState] = useState(initiateGlobalState())
 
-	const mergeState = (newData: DeepPartial<GlobalStateInterface>): GlobalStateInterface => {
-		return _.merge(state, newData)
+	const updateState = (newState: DeepPartial<GlobalStateInterface>): void => {
+		const newTime = new Date().getTime()
+		const newGlobalState = _.merge(state, { ...newState, stateUpdatedAt: newTime })
+		localStorage.setItem('GlobalState', JSON.stringify(newGlobalState))
+		_setState((prevState) => ({ ...prevState, ...newGlobalState }))
 	}
-
-	useEffect(() => {
-		localStorage.setItem('GlobalState', JSON.stringify(state))
-	}, [state])
 
 	const addMins = (mins: number) => {
 		const newDateAsMinutes = (getDateInMinutes(state.time) + mins) % 10080
@@ -130,19 +141,19 @@ const GlobalStateProvider = ({
 		const newHours = Math.floor(minutesLeftAfterDays / 60)
 		const newMins = minutesLeftAfterDays % 60
 
-		setState((prev) => ({ ...prev, ...mergeState({ time: { days: newDays, hours: newHours, mins: newMins } }) }))
+		updateState({ time: { days: newDays, hours: newHours, mins: newMins } })
 	}
 
 	const resetGame = () => {
-		setState((prev) => ({ ...prev, ...defaultGlobalState }))
+		updateState(defaultGlobalState)
 	}
 
 	const updateScene = (scene: sceneNames) => {
-		setState((prev) => ({ ...prev, ...{ stage: { scene } } }))
+		updateState({ stage: { scene } })
 	}
 
 	const updatePlayer = (playerData: Partial<PlayerData>) => {
-		setState((prev) => ({ ...prev, ...{ player: { ...state.player, ...playerData } } }))
+		updateState({ player: { ...state.player, ...playerData } })
 	}
 
 	const getStat = (statKey: statKeys) => {
@@ -155,10 +166,10 @@ const GlobalStateProvider = ({
 		const stats = [...state.player.stats]
 		const index = stats.findIndex(stat => stat.stateKey === statKey)
 		stats[index].currentValue = newValue
-		setState((prev) => ({ ...prev, ...mergeState({ player: { stats } }) }))
+		updateState({ player: { stats } })
 	}
 
-	const changeState = (change: StateChange) => {
+	const changeStat = (change: StatChange) => {
 		const stat = getStat(change.statKey)
 		switch (change.action) {
 		case statActions.add:
@@ -168,19 +179,19 @@ const GlobalStateProvider = ({
 			return setStat(change.statKey, stat.currentValue - change.value)
 
 		default:
-			throw new Error('Unknown StatKey')
+			throw new Error('Unknown statActions')
 		}
 	}
 
 	const contextValue = {
 		state,
-		setState,
+		updateState,
 		updateScene,
 		updatePlayer,
 		resetGame,
 		addMins,
 		getStat,
-		changeState
+		changeStat
 	}
 
 	return (
@@ -198,15 +209,4 @@ const useGlobalState = () => {
 	return context
 }
 
-const initiateGlobalState = () => {
-	const localGlobalState = localStorage.getItem('GlobalState')
-	console.log('localGlobalState', localGlobalState)
-	if (localGlobalState) {
-		const test = _.merge({ ...defaultGlobalState }, JSON.parse(localGlobalState))
-		console.log('test:', test)
-		return test
-	}
-	return { ...defaultGlobalState }
-}
-
-export { GlobalStateProvider, useGlobalState, initiateGlobalState }
+export { GlobalStateProvider, useGlobalState }

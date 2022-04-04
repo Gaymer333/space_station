@@ -1,11 +1,11 @@
 import React from 'react'
 import SideBar from './components/SideBar'
 import Stage from './components/Stage'
-import { GlobalStateProvider, initiateGlobalState } from './GlobalStateProvider'
+import { GlobalStateProvider } from './GlobalStateProvider'
 
 function App () {
 	return (
-		<GlobalStateProvider value={initiateGlobalState()} >
+		<GlobalStateProvider >
 			<div className="App">
 				<SideBar />
 				<Stage />
