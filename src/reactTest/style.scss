@@ -1,0 +1,25 @@
+body {
+	width: 100%;
+
+	.reactTest {
+		width: 100%;
+
+		.testWrapper {
+			width: 100%;
+			display: flex;
+
+			div {
+				width: 100%;
+			}
+
+			.test {
+				width: 50%;
+				display: flex;
+
+				.playground, .stats {
+					width: 50%;
+				}
+			}
+		}
+	}
+}

@@ -2,13 +2,15 @@ import React from 'react'
 import SideBar from './components/SideBar'
 import Stage from './components/Stage'
 import { GlobalStateProvider } from './GlobalStateProvider'
+import ReactTest from './reactTest'
 
 function App () {
 	return (
 		<GlobalStateProvider >
 			<div className="App">
-				<SideBar />
-				<Stage />
+				<ReactTest />
+				{/* <SideBar />
+				<Stage /> */}
 			</div>
 		</GlobalStateProvider>
 	)
