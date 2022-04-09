@@ -5,7 +5,7 @@ import { DeepPartial } from './types'
 import { getEventsBetweenTimesInMinutes, getTimeFromTimeInMinutes, getTimeInMinutes, Time } from './functions/time'
 import { GameEvent } from './functions/event'
 import { changeStat, getStat, StatActions, StatChange, StatKeys } from './functions/stat'
-import { checkIfEnoughMoney } from './functions/inventory'
+import { changeMoney, checkIfEnoughMoney, MoneyChange } from './functions/inventory'
 
 interface Stat {
 	stateKey: StatKeys,
@@ -86,7 +86,8 @@ interface GlobalStateHandlerInterface {
 	addMins: (mins: number) => void,
 	getStat: (statKey: StatKeys) => Stat,
 	changeStat: (change: StatChange) => void,
-	checkIfEnoughMoney: (cost: number) => boolean
+	checkIfEnoughMoney: (cost: number) => boolean,
+	changeMoney: (change: MoneyChange) => void
 }
 
 const initiateGlobalState = () => {
@@ -152,7 +153,8 @@ const GlobalStateProvider = ({
 		addMins,
 		getStat: getStat(state),
 		changeStat: changeStat(state, updateState),
-		checkIfEnoughMoney: checkIfEnoughMoney(state)
+		checkIfEnoughMoney: checkIfEnoughMoney(state),
+		changeMoney: changeMoney(state, updateState)
 	}
 
 	return (
