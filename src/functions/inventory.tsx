@@ -24,3 +24,7 @@ export const changeMoney = (state: GlobalStateInterface, updateState: (newState:
 
 	updateState({ inventory: { money: newMoneyAmount } })
 }
+
+export const checkIfEnoughMoney = (state: GlobalStateInterface) => (value: number) => {
+	return state.inventory.money >= value
+}
