@@ -1,15 +1,15 @@
 import React from 'react'
 import { daysAsString } from '../funktions/time'
-import { statKeys, useGlobalState } from '../GlobalStateProvider'
+import { StatKeys, useGlobalState } from '../GlobalStateProvider'
 
 const SideBar = () => {
 	const { state, resetGame, addMins, getStat } = useGlobalState()
 	const { player, inventory } = state
-	const alcohol = getStat(statKeys.alcohol)
+	const alcohol = getStat(StatKeys.alcohol)
 
 	return <div className="sideBar">
 		<div className='player_details'>
-			<h2>{player.firstname} {player.lastname}</h2>
+			<h2>{player.firstName} {player.lastName}</h2>
 			<p>Age: {player.age}</p>
 			<p>Bucks: {inventory.money}</p>
 			<hr />

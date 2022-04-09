@@ -8,7 +8,7 @@ const Pregame = () => {
 
 	const saveName = () => {
 		const playerName = (document.getElementById('player_name') as HTMLInputElement).value
-		updatePlayer({ firstname: playerName })
+		updatePlayer({ firstName: playerName })
 	}
 
 	return <>
@@ -20,7 +20,7 @@ const Pregame = () => {
 		<hr />
 		<h2>About you.</h2>
 		<p>What is your first name?</p>
-		<input type="text" name='player_name' id='player_name' defaultValue={state.player.firstname} />
+		<input type="text" name='player_name' id='player_name' defaultValue={state.player.firstName} />
 		<button onClick={saveName} >Save name</button>
 		<hr />
 		<p>Ready? Lets get your new life onboard of <strong>SSBD</strong></p>

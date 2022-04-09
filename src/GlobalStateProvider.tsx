@@ -4,17 +4,18 @@ import _ from 'lodash'
 import { DeepPartial } from './types'
 import { getEventsBetweenTimesInMinutes, getTimeFromTimeInMinutes, getTimeInMinutes, Time } from './funktions/time'
 import { GameEvent } from './funktions/event'
+import { changeStat, getStat } from './funktions/stat'
 
 interface Stat {
-	stateKey: statKeys,
+	stateKey: StatKeys,
 	currentValue: number,
 	minValue: number,
 	maxValue: number
 }
 
 export interface PlayerData {
-	firstname: string;
-	lastname: string;
+	firstName: string;
+	lastName: string;
 	age: number;
 	stats: Array<Stat>
 }
@@ -35,18 +36,18 @@ export interface GlobalStateInterface {
 	stateUpdatedAt: Date
 }
 
-export enum statKeys {
+export enum StatKeys {
 	'alcohol'
 }
 
-export enum statActions {
+export enum StatActions {
 	'add',
 	'subtract',
 }
 
 export interface StatChange {
-	statKey: statKeys,
-	action: statActions,
+	statKey: StatKeys,
+	action: StatActions,
 	value: number
 }
 
@@ -69,18 +70,18 @@ const getDefaultGlobalState = (): GlobalStateInterface => ({
 		type: 'repeatingHourly',
 		minuteInTheHour: 0,
 		changes: [{
-			statKey: statKeys.alcohol,
-			action: statActions.subtract,
+			statKey: StatKeys.alcohol,
+			action: StatActions.subtract,
 			value: 10
 		}]
 	}],
 	player: {
-		firstname: 'Max',
-		lastname: 'Power',
+		firstName: 'Max',
+		lastName: 'Power',
 		age: 20,
 		stats: [
 			{
-				stateKey: statKeys.alcohol,
+				stateKey: StatKeys.alcohol,
 				currentValue: 0,
 				minValue: 0,
 				maxValue: 100
@@ -97,7 +98,7 @@ interface GlobalStateHandlerInterface {
 	updatePlayer: (player: Partial<PlayerData>) => void,
 	resetGame: () => void,
 	addMins: (mins: number) => void,
-	getStat: (statKey: statKeys) => Stat,
+	getStat: (statKey: StatKeys) => Stat,
 	changeStat: (change: StatChange) => void
 }
 
@@ -139,33 +140,6 @@ const GlobalStateProvider = ({
 		updateState({ player: { ...state.player, ...playerData } })
 	}
 
-	const getStat = (statKey: statKeys) => {
-		const stat = state.player.stats.find(stat => stat.stateKey === statKey)
-		if (stat) return stat
-		throw new Error('Stat missing')
-	}
-
-	const setStat = (statKey: statKeys, newValue: number) => {
-		const stats = [...state.player.stats]
-		const index = stats.findIndex(stat => stat.stateKey === statKey)
-		stats[index].currentValue = newValue
-		updateState({ player: { stats } })
-	}
-
-	const changeStat = (change: StatChange) => {
-		const stat = getStat(change.statKey)
-		switch (change.action) {
-		case statActions.add:
-			return setStat(change.statKey, stat.currentValue + change.value)
-
-		case statActions.subtract:
-			return setStat(change.statKey, stat.currentValue - change.value)
-
-		default:
-			throw new Error('Unknown statActions')
-		}
-	}
-
 	const addMins = (mins: number) => {
 		const oldTimeInMinutes = getTimeInMinutes(state.time)
 
@@ -175,7 +149,7 @@ const GlobalStateProvider = ({
 
 		for (const gameEvent of gameEvents) {
 			for (const change of gameEvent.changes) {
-				changeStat(change)
+				changeStat(state, updateState)(change)
 			}
 		}
 
@@ -189,8 +163,8 @@ const GlobalStateProvider = ({
 		updatePlayer,
 		resetGame,
 		addMins,
-		getStat,
-		changeStat
+		getStat: getStat(state),
+		changeStat: changeStat(state, updateState)
 	}
 
 	return (
