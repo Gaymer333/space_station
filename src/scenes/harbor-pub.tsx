@@ -4,14 +4,16 @@ import { StatActions, StatKeys } from '../functions/stat'
 import { useGlobalState } from '../GlobalStateProvider'
 
 const HarborPub = () => {
-	const { updateScene, changeStat } = useGlobalState()
+	const { updateScene, changeStat, checkIfEnoughMoney } = useGlobalState()
 
 	const drinkBeer = () => {
-		changeStat({
-			statKey: StatKeys.alcohol,
-			action: StatActions.add,
-			value: 10
-		})
+		if (checkIfEnoughMoney(10)) {
+			changeStat({
+				statKey: StatKeys.alcohol,
+				action: StatActions.add,
+				value: 10
+			})
+		}
 	}
 
 	return <>
