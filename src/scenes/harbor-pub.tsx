@@ -1,10 +1,11 @@
 import React from 'react'
 import { sceneNames } from '.'
+import { AmountActions } from '../functions/inventory'
 import { StatActions, StatKeys } from '../functions/stat'
 import { useGlobalState } from '../GlobalStateProvider'
 
 const HarborPub = () => {
-	const { updateScene, changeStat, checkIfEnoughMoney } = useGlobalState()
+	const { updateScene, changeStat, checkIfEnoughMoney, changeMoney, addMins } = useGlobalState()
 
 	const drinkBeer = () => {
 		if (checkIfEnoughMoney(10)) {
@@ -13,6 +14,11 @@ const HarborPub = () => {
 				action: StatActions.add,
 				value: 10
 			})
+			changeMoney({
+				action: AmountActions.add,
+				value: -20
+			})
+			addMins(20)
 		}
 	}
 
