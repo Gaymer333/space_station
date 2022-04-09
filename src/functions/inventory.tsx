@@ -1,30 +1,25 @@
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { DeepPartial } from '../types'
-
-export enum AmountActions {
-	'add',
-	'subtract',
-}
+import { ChangeAmountActions, DeepPartial } from '../types'
 
 export interface MoneyChange {
-	action: AmountActions,
+	action: ChangeAmountActions,
 	value: number
 }
 
 export const changeMoney = (state: GlobalStateInterface, updateState: (newState: DeepPartial<GlobalStateInterface>) => void) => (change: MoneyChange) => {
 	let newMoneyAmount: number
 	switch (change.action) {
-	case AmountActions.add:
-		newMoneyAmount = state.inventory.money + change.value
+	case ChangeAmountActions.add:
+		newMoneyAmount = state.player.inventory.money + change.value
 		break
-	case AmountActions.subtract:
-		newMoneyAmount = state.inventory.money - change.value
+	case ChangeAmountActions.subtract:
+		newMoneyAmount = state.player.inventory.money - change.value
 		break
 	}
 
-	updateState({ inventory: { money: newMoneyAmount } })
+	updateState({ player: { inventory: { money: newMoneyAmount } } })
 }
 
 export const checkIfEnoughMoney = (state: GlobalStateInterface) => (value: number) => {
-	return state.inventory.money >= value
+	return state.player.inventory.money >= value
 }

@@ -1,18 +1,13 @@
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { DeepPartial } from '../types'
+import { ChangeAmountActions, DeepPartial } from '../types'
 
 export enum StatKeys {
 	'alcohol'
 }
 
-export enum StatActions {
-	'add',
-	'subtract',
-}
-
 export interface StatChange {
 	statKey: StatKeys,
-	action: StatActions,
+	action: ChangeAmountActions,
 	value: number
 }
 
@@ -39,11 +34,11 @@ export const changeStat = (
 	const stat = getStat(state)(change.statKey)
 	let newValue = stat.currentValue
 	switch (change.action) {
-	case StatActions.add:
+	case ChangeAmountActions.add:
 		newValue = Math.min(stat.currentValue + change.value, stat.maxValue)
 		break
 
-	case StatActions.subtract:
+	case ChangeAmountActions.subtract:
 		newValue = Math.max(stat.currentValue - change.value, stat.minValue)
 		break
 

@@ -1,11 +1,12 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { sceneNames } from './scenes'
 import _ from 'lodash'
-import { DeepPartial } from './types'
+import { ChangeAmountActions, DeepPartial } from './types'
 import { getEventsBetweenTimesInMinutes, getTimeFromTimeInMinutes, getTimeInMinutes, Time } from './functions/time'
 import { GameEvent } from './functions/event'
-import { changeStat, getStat, StatActions, StatChange, StatKeys } from './functions/stat'
+import { changeStat, getStat, StatChange, StatKeys } from './functions/stat'
 import { changeMoney, checkIfEnoughMoney, MoneyChange } from './functions/inventory'
+import { changeEnergy, checkIfEnoughEnergy, EnergyChange } from './functions/energy'
 
 interface Stat {
 	stateKey: StatKeys,
@@ -18,7 +19,15 @@ export interface PlayerData {
 	firstName: string;
 	lastName: string;
 	age: number;
-	stats: Array<Stat>
+	energy: {
+		currentValue: number;
+		minValue: number;
+		maxValue: number;
+	}
+	stats: Array<Stat>;
+	inventory: {
+		money: number
+	},
 }
 
 export interface GlobalStateInterface {
@@ -28,9 +37,6 @@ export interface GlobalStateInterface {
 	time: Time,
 	stage: {
 		scene: sceneNames
-	},
-	inventory: {
-		money: number
 	},
 	player: PlayerData,
 	events: Array<GameEvent>,
@@ -49,15 +55,12 @@ const getDefaultGlobalState = (): GlobalStateInterface => ({
 	stage: {
 		scene: sceneNames.pregame
 	},
-	inventory: {
-		money: 200
-	},
 	events: [{
 		type: 'repeatingHourly',
 		minuteInTheHour: 0,
 		changes: [{
 			statKey: StatKeys.alcohol,
-			action: StatActions.subtract,
+			action: ChangeAmountActions.subtract,
 			value: 10
 		}]
 	}],
@@ -65,6 +68,11 @@ const getDefaultGlobalState = (): GlobalStateInterface => ({
 		firstName: 'Max',
 		lastName: 'Power',
 		age: 20,
+		energy: {
+			currentValue: 100,
+			minValue: 0,
+			maxValue: 100
+		},
 		stats: [
 			{
 				stateKey: StatKeys.alcohol,
@@ -72,7 +80,10 @@ const getDefaultGlobalState = (): GlobalStateInterface => ({
 				minValue: 0,
 				maxValue: 100
 			}
-		]
+		],
+		inventory: {
+			money: 200
+		}
 	},
 	stateUpdatedAt: new Date()
 })
@@ -84,10 +95,13 @@ interface GlobalStateHandlerInterface {
 	updatePlayer: (player: Partial<PlayerData>) => void,
 	resetGame: () => void,
 	addMins: (mins: number) => void,
+	addHours: (hours: number) => void,
 	getStat: (statKey: StatKeys) => Stat,
 	changeStat: (change: StatChange) => void,
 	checkIfEnoughMoney: (cost: number) => boolean,
 	changeMoney: (change: MoneyChange) => void
+	changeEnergy: (change: EnergyChange) => void
+	checkIfEnoughEnergy: (value: number) => boolean
 }
 
 const initiateGlobalState = () => {
@@ -144,6 +158,10 @@ const GlobalStateProvider = ({
 		updateState({ time: newTime })
 	}
 
+	const addHours = (hours: number) => {
+		addMins(hours * 60)
+	}
+
 	const contextValue = {
 		state,
 		updateState,
@@ -151,10 +169,13 @@ const GlobalStateProvider = ({
 		updatePlayer,
 		resetGame,
 		addMins,
+		addHours,
 		getStat: getStat(state),
 		changeStat: changeStat(state, updateState),
 		checkIfEnoughMoney: checkIfEnoughMoney(state),
-		changeMoney: changeMoney(state, updateState)
+		changeMoney: changeMoney(state, updateState),
+		changeEnergy: changeEnergy(state, updateState),
+		checkIfEnoughEnergy: checkIfEnoughEnergy(state)
 	}
 
 	return (
