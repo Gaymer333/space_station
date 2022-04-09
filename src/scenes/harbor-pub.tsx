@@ -1,6 +1,7 @@
 import React from 'react'
 import { sceneNames } from '.'
-import { StatActions, StatKeys, useGlobalState } from '../GlobalStateProvider'
+import { StatActions, StatKeys } from '../functions/stat'
+import { useGlobalState } from '../GlobalStateProvider'
 
 const HarborPub = () => {
 	const { updateScene, changeStat } = useGlobalState()

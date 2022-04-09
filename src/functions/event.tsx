@@ -1,4 +1,4 @@
-import { StatChange } from '../GlobalStateProvider'
+import { StatChange } from './stat'
 import { daysAsString, Time } from './time'
 
 interface OneTimeEvent {

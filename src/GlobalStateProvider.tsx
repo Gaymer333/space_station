@@ -2,9 +2,9 @@ import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, 
 import { sceneNames } from './scenes'
 import _ from 'lodash'
 import { DeepPartial } from './types'
-import { getEventsBetweenTimesInMinutes, getTimeFromTimeInMinutes, getTimeInMinutes, Time } from './funktions/time'
-import { GameEvent } from './funktions/event'
-import { changeStat, getStat } from './funktions/stat'
+import { getEventsBetweenTimesInMinutes, getTimeFromTimeInMinutes, getTimeInMinutes, Time } from './functions/time'
+import { GameEvent } from './functions/event'
+import { changeStat, getStat, StatActions, StatChange, StatKeys } from './functions/stat'
 
 interface Stat {
 	stateKey: StatKeys,
@@ -34,21 +34,6 @@ export interface GlobalStateInterface {
 	player: PlayerData,
 	events: Array<GameEvent>,
 	stateUpdatedAt: Date
-}
-
-export enum StatKeys {
-	'alcohol'
-}
-
-export enum StatActions {
-	'add',
-	'subtract',
-}
-
-export interface StatChange {
-	statKey: StatKeys,
-	action: StatActions,
-	value: number
 }
 
 const getDefaultGlobalState = (): GlobalStateInterface => ({

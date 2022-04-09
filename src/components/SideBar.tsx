@@ -1,6 +1,7 @@
 import React from 'react'
-import { daysAsString } from '../funktions/time'
-import { StatKeys, useGlobalState } from '../GlobalStateProvider'
+import { StatKeys } from '../functions/stat'
+import { daysAsString } from '../functions/time'
+import { useGlobalState } from '../GlobalStateProvider'
 
 const SideBar = () => {
 	const { state, resetGame, addMins, getStat } = useGlobalState()

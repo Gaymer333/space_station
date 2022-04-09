@@ -1,5 +1,20 @@
-import { GlobalStateInterface, StatActions, StatChange, StatKeys } from '../GlobalStateProvider'
+import { GlobalStateInterface } from '../GlobalStateProvider'
 import { DeepPartial } from '../types'
+
+export enum StatKeys {
+	'alcohol'
+}
+
+export enum StatActions {
+	'add',
+	'subtract',
+}
+
+export interface StatChange {
+	statKey: StatKeys,
+	action: StatActions,
+	value: number
+}
 
 export const getStat = (state: GlobalStateInterface) => (statKey: StatKeys) => {
 	const stat = state.player.stats.find(stat => stat.stateKey === statKey)
