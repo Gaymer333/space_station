@@ -35,5 +35,5 @@ export const changeStat = (
 	default:
 		throw new Error('Unknown statActions')
 	}
-	return setStat(state, updateState)(change.statKey, newValue)
+	setStat(state, updateState)(change.statKey, newValue)
 }
