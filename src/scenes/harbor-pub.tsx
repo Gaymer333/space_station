@@ -1,28 +1,36 @@
 import React from 'react'
 import { sceneNames } from '.'
+import { AttributeKeys } from '../functions/attribute'
 import { StatKeys } from '../functions/stat'
 import { useGlobalState } from '../GlobalStateProvider'
+import { getSoberingUpEvent } from '../prefabs/events'
 import { ChangeAmountActions } from '../types'
 
 const HarborPub = () => {
-	const { updateScene, changeStat, checkIfEnoughMoney, changeMoney, addMins, addHours, changeEnergy, checkIfEnoughEnergy } = useGlobalState()
+	const { state, updateScene, changeStat, checkIfEnoughMoney, changeMoney, addMins, addHours, changeEnergy, checkIfEnoughEnergy, addUniqueEvent, getAttribute, changeAttributeXP } = useGlobalState()
 
 	const drinkBeer = () => {
 		if (checkIfEnoughMoney(10)) {
 			changeStat({
 				statKey: StatKeys.alcohol,
 				action: ChangeAmountActions.add,
-				value: 10
+				value: 8 + getAttribute(AttributeKeys.charisma).currentValue
 			})
 			changeMoney({
 				action: ChangeAmountActions.add,
 				value: -20
 			})
+			changeAttributeXP({
+				attributeKey: AttributeKeys.charisma,
+				action: ChangeAmountActions.add,
+				value: 1
+			})
 			addMins(20)
+			addUniqueEvent(getSoberingUpEvent(state))
 		}
 	}
 
-	const work = () => {
+	const workWaiter = () => {
 		if (checkIfEnoughEnergy(25)) {
 			changeEnergy({
 				action: ChangeAmountActions.subtract,
@@ -36,18 +44,29 @@ const HarborPub = () => {
 		}
 	}
 
+	const sleep = () => {
+		changeEnergy({
+			action: ChangeAmountActions.add,
+			value: 50
+		})
+		addHours(4)
+	}
+
 	return <>
 		<h1>Harbor Pubs</h1>
 		<p>You enter the pub. It have a large array of types in here. It is not hard to see that this pub use used by a lot of the local workers</p>
-		<p>Shipworkers drinking, singing, arm wrestling and dice playing. All men with big arms and big chests</p>
+		<p>Ship workers drinking, singing, arm wrestling and dice playing. All men with big arms and big chests</p>
 		<p>To keep the patrons of the hydrated, are multiple young lads zooming around, talking orders and bringing beer.</p>
 		<p>In the bar is a older man standing, poring beer and talk to what looks like to be the more old patrons.</p>
 		<hr />
 		<p>Beer - 20 Buck</p>
 		<button onClick={drinkBeer} >Buy and drink</button>
 		<hr />
-		<p>Work - 25 Energy - 3 Hour</p>
-		<button onClick={work} >Work</button>
+		<p>Work - Waiter - 25 Energy - 3 Hour</p>
+		<button onClick={workWaiter} >Work</button>
+		<hr />
+		<p>Sleep - 4 Hour - 50 Energy</p>
+		<button onClick={sleep} >Sleep</button>
 		<hr />
 		<button onClick={() => updateScene(sceneNames.harbor)} >Leave</button>
 	</>

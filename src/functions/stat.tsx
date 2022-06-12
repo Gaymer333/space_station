@@ -1,6 +1,13 @@
 import { GlobalStateInterface } from '../GlobalStateProvider'
 import { ChangeAmountActions, DeepPartial } from '../types'
 
+export interface Stat {
+	stateKey: StatKeys,
+	currentValue: number,
+	minValue: number,
+	maxValue: number
+}
+
 export enum StatKeys {
 	'alcohol'
 }

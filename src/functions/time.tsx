@@ -27,7 +27,6 @@ export const getTimeInMinutes = (value: Time) => {
 export const getEventsBetweenTimesInMinutes = (startTime: number, endTime: number, events: Array<GameEvent>): Array<GameEvent> => {
 	const allEvents = generateAllEvents(events)
 	const findEventsBetweenTimes = startTime < endTime
-	console.log('findEventsBetweenTimes', findEventsBetweenTimes)
 
 	const eventsBetweenTimes = allEvents.filter(event => {
 		const eventTimeInMinutes = getTimeInMinutes(event.time)
