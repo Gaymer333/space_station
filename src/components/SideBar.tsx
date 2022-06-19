@@ -4,15 +4,25 @@ import { StatKeys } from '../functions/stat'
 import { daysAsString } from '../functions/time'
 import { useGlobalState } from '../GlobalStateProvider'
 
+const AttributeXP = ({ attribute }: { attribute: Attribute }) => {
+	if (attribute.currentLevel >= attribute.maxLevel) return <div>Maxed</div>
+	return <p>
+	XP: {attribute.xp}/{attribute.levelupXpTarget}
+	</p>
+}
+
 const AttributeLine = ({ attributeKey }: {attributeKey: AttributeKeys}) => {
 	const { getAttribute } = useGlobalState()
 	const attribute = getAttribute(attributeKey)
 
-	return <p>{attribute.attributeName}: {attribute.currentValue}<br />XP: {attribute.xp}</p>
+	return <div className='attributeLine'>
+		<p>{attribute.attributeName}: {attribute.currentLevel}/{attribute.maxLevel}</p>
+		<AttributeXP attribute={attribute} />
+	</div>
 }
 
 const SideBar = () => {
-	const { state, resetGame, addMins, getStat, getAttribute } = useGlobalState()
+	const { state, resetGame, addMins, getStat } = useGlobalState()
 	const { player } = state
 	const alcohol = getStat(StatKeys.alcohol)
 

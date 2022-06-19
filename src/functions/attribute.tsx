@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { GlobalStateInterface } from '../GlobalStateProvider'
 import { ChangeAmountActions, DeepPartial } from '../types'
 
@@ -19,8 +20,10 @@ export interface AttributeChange {
 export interface Attribute {
 	attributeName: string,
 	attributeKey: AttributeKeys,
-	currentValue: number,
+	currentLevel: number,
+	maxLevel: number,
 	xp: number
+	levelupXpTarget: number
 }
 
 export const getAttribute = (state: GlobalStateInterface) => (attributeKey: AttributeKeys) => {
@@ -29,13 +32,28 @@ export const getAttribute = (state: GlobalStateInterface) => (attributeKey: Attr
 	throw new Error('Attribute missing')
 }
 
-export const setAttribute = (
+export const setAttributeLevel = (
 	state: GlobalStateInterface,
 	updateState: (newState: DeepPartial<GlobalStateInterface>) => void
 ) => (attributeKey: AttributeKeys, newValue: number) => {
 	const attributes = [...state.player.attributes]
 	const index = attributes.findIndex(stat => stat.attributeKey === attributeKey)
-	attributes[index].currentValue = newValue
+	attributes[index].currentLevel = newValue
+	updateState({ player: { attributes } })
+}
+
+export const setAttributeXp = (
+	state: GlobalStateInterface,
+	updateState: (newState: DeepPartial<GlobalStateInterface>) => void
+) => (attributeKey: AttributeKeys, newValue: number) => {
+	const attributes = [...state.player.attributes]
+	const index = attributes.findIndex(stat => stat.attributeKey === attributeKey)
+	const attribute = attributes[index]
+	if (newValue > attribute.levelupXpTarget && attribute.currentLevel < attribute.maxLevel) {
+		attribute.currentLevel++
+		attribute.xp = newValue - attribute.levelupXpTarget
+		attribute.levelupXpTarget = _.ceil(newValue * 1.2, -1)
+	} else attribute.xp = newValue
 	updateState({ player: { attributes } })
 }
 
@@ -56,5 +74,5 @@ export const changeAttributeXP = (
 	default:
 		throw new Error('Unknown statActions')
 	}
-	setAttribute(state, updateState)(change.attributeKey, newValue)
+	setAttributeXp(state, updateState)(change.attributeKey, newValue)
 }

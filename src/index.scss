@@ -20,6 +20,13 @@ code {
 		background-color: #d7d0ff;
 		height: calc(100vh - 40px);
 		padding: 20px;
+
+		.attributeLine {
+			margin: 10px 0;
+			p {
+				margin: 0;
+			}
+		}
 	}
 
 	.stage {

@@ -8,6 +8,7 @@ import { changeStat, getStat, Stat, StatChange, StatKeys } from './functions/sta
 import { changeMoney, checkIfEnoughMoney, MoneyChange } from './functions/inventory'
 import { changeEnergy, checkIfEnoughEnergy, EnergyChange } from './functions/energy'
 import { Attribute, AttributeChange, AttributeKeys, changeAttributeXP, getAttribute } from './functions/attribute'
+import getDefaultGlobalState from './utils/getDefaultGlobalState'
 
 export interface PlayerData {
 	firstName: string;
@@ -37,81 +38,6 @@ export interface GlobalStateInterface {
 	events: Array<GameEvent>,
 	stateUpdatedAt: Date
 }
-
-const getDefaultGlobalState = (): GlobalStateInterface => ({
-	meta: {
-		gameStarted: false
-	},
-	time: {
-		days: 0,
-		hours: 10,
-		mins: 0
-	},
-	stage: {
-		scene: sceneNames.pregame
-	},
-	events: [],
-	player: {
-		firstName: 'Max',
-		lastName: 'Power',
-		age: 20,
-		energy: {
-			currentValue: 100,
-			minValue: 0,
-			maxValue: 100
-		},
-		stats: [
-			{
-				stateKey: StatKeys.alcohol,
-				currentValue: 0,
-				minValue: 0,
-				maxValue: 100
-			}
-		],
-		inventory: {
-			money: 200
-		},
-		attributes: [
-			{
-				attributeName: 'Strength',
-				attributeKey: AttributeKeys.strength,
-				currentValue: 2,
-				xp: 0
-			},
-			{
-				attributeName: 'Agility',
-				attributeKey: AttributeKeys.agility,
-				currentValue: 2,
-				xp: 0
-			},
-			{
-				attributeName: 'Intelligence',
-				attributeKey: AttributeKeys.endurance,
-				currentValue: 2,
-				xp: 0
-			},
-			{
-				attributeName: 'Endurance',
-				attributeKey: AttributeKeys.intelligence,
-				currentValue: 2,
-				xp: 0
-			},
-			{
-				attributeName: 'Charisma',
-				attributeKey: AttributeKeys.charisma,
-				currentValue: 2,
-				xp: 0
-			},
-			{
-				attributeName: 'Luck',
-				attributeKey: AttributeKeys.luck,
-				currentValue: 2,
-				xp: 0
-			}
-		]
-	},
-	stateUpdatedAt: new Date()
-})
 
 interface GlobalStateHandlerInterface {
 	state: GlobalStateInterface,

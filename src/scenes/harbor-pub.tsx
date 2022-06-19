@@ -14,16 +14,11 @@ const HarborPub = () => {
 			changeStat({
 				statKey: StatKeys.alcohol,
 				action: ChangeAmountActions.add,
-				value: 8 + getAttribute(AttributeKeys.charisma).currentValue
+				value: 8
 			})
 			changeMoney({
 				action: ChangeAmountActions.add,
 				value: -20
-			})
-			changeAttributeXP({
-				attributeKey: AttributeKeys.charisma,
-				action: ChangeAmountActions.add,
-				value: 1
 			})
 			addMins(20)
 			addUniqueEvent(getSoberingUpEvent(state))
@@ -38,7 +33,12 @@ const HarborPub = () => {
 			})
 			changeMoney({
 				action: ChangeAmountActions.add,
-				value: 10
+				value: 10 + getAttribute(AttributeKeys.charisma).currentLevel
+			})
+			changeAttributeXP({
+				attributeKey: AttributeKeys.charisma,
+				action: ChangeAmountActions.add,
+				value: 110
 			})
 			addHours(3)
 		}
