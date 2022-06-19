@@ -1,6 +1,6 @@
 import React from 'react'
-import { sceneNames } from '.'
-import { useGlobalState } from '../GlobalStateProvider'
+import { sceneNames } from '..'
+import { useGlobalState } from '../../GlobalStateProvider'
 
 const Harbor = () => {
 	const { updateScene } = useGlobalState()

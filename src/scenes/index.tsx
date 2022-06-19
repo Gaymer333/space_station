@@ -1,6 +1,6 @@
 import React from 'react'
 import Harbor from './harbor'
-import HarborPub from './harbor-pub'
+import HarborPub from './harbor/pub'
 import Intro from './intro'
 import Pregame from './pregame'
 

@@ -1,10 +1,10 @@
 import React from 'react'
-import { sceneNames } from '.'
-import { AttributeKeys } from '../functions/attribute'
-import { StatKeys } from '../functions/stat'
-import { useGlobalState } from '../GlobalStateProvider'
-import { getSoberingUpEvent } from '../prefabs/events'
-import { ChangeAmountActions } from '../types'
+import { sceneNames } from '../..'
+import { AttributeKeys } from '../../../functions/attribute'
+import { StatKeys } from '../../../functions/stat'
+import { useGlobalState } from '../../../GlobalStateProvider'
+import { getSoberingUpEvent } from '../../../prefabs/events'
+import { ChangeAmountActions } from '../../../types'
 
 const HarborPub = () => {
 	const { state, updateScene, changeStat, checkIfEnoughMoney, changeMoney, addMins, addHours, changeEnergy, checkIfEnoughEnergy, addUniqueEvent, getAttribute, changeAttributeXP } = useGlobalState()
