@@ -1,5 +1,6 @@
 import React from 'react'
 import { sceneNames } from '../..'
+import { ChangeStageButton } from '../../../components/Buttons'
 import { AttributeKeys } from '../../../functions/attribute'
 import { StatKeys } from '../../../functions/stat'
 import { useGlobalState } from '../../../GlobalStateProvider'
@@ -63,10 +64,10 @@ const HarborPub = () => {
 		<button onClick={drinkBeer} >Buy and drink</button>
 		<hr />
 		<p>Work - Waiter - 25 Energy - 3 Hour</p>
-		<button onClick={() => updateScene(sceneNames.harbor_pub_work_tables)} >Work</button>
+		<ChangeStageButton sceneName={sceneNames.harbor_pub_work_tables} disableCheck={!checkIfEnoughEnergy(25)} />
 		<br />
 		<p>Work - Bartender - 25 Energy - 3 Hour</p>
-		<button onClick={() => updateScene(sceneNames.harbor_pub_work_bar)} >Work</button>
+		<ChangeStageButton sceneName={sceneNames.harbor_pub_work_bar} disableCheck={!checkIfEnoughEnergy(25)} />
 		<hr />
 		<p>Sleep - 4 Hour - 50 Energy</p>
 		<button onClick={sleep} >Sleep</button>
