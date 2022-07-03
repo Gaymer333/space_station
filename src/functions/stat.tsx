@@ -1,5 +1,5 @@
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { ChangeAmountActions, DeepPartial } from '../types'
+import { BaseChangeAmountActions, DeepPartial } from '../types'
 
 export interface Stat {
 	stateKey: StatKeys,
@@ -14,7 +14,7 @@ export enum StatKeys {
 
 export interface StatChange {
 	statKey: StatKeys,
-	action: ChangeAmountActions,
+	action: BaseChangeAmountActions,
 	value: number
 }
 
@@ -41,11 +41,11 @@ export const changeStat = (
 	const stat = getStat(state)(change.statKey)
 	let newValue = stat.currentValue
 	switch (change.action) {
-	case ChangeAmountActions.add:
+	case BaseChangeAmountActions.add:
 		newValue = Math.min(stat.currentValue + change.value, stat.maxValue)
 		break
 
-	case ChangeAmountActions.subtract:
+	case BaseChangeAmountActions.subtract:
 		newValue = Math.max(stat.currentValue - change.value, stat.minValue)
 		break
 

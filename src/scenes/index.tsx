@@ -3,6 +3,7 @@ import Harbor from './harbor'
 import HarborPub from './harbor/pub'
 import HarborPubWorkingBar from './harbor/pub/workingBar'
 import HarborPubWorkingTables from './harbor/pub/workingTables'
+import HarborPubGetJob from './harbor/pub/getJob'
 import Intro from './intro'
 import Pregame from './pregame'
 
@@ -11,6 +12,7 @@ export enum sceneNames {
 	'intro',
 	'harbor',
 	'harbor_pub',
+	'harbor_pub_get_job',
 	'harbor_pub_work_bar',
 	'harbor_pub_work_tables'
 }
@@ -36,6 +38,9 @@ export const getScene = (scene: sceneNames | undefined) => {
 
 	case sceneNames.harbor_pub_work_tables:
 		return HarborPubWorkingTables
+
+	case sceneNames.harbor_pub_get_job:
+		return HarborPubGetJob
 
 	default:
 		return Pregame

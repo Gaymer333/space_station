@@ -1,18 +1,18 @@
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { ChangeAmountActions, DeepPartial } from '../types'
+import { BaseChangeAmountActions, DeepPartial } from '../types'
 
 export interface MoneyChange {
-	action: ChangeAmountActions,
+	action: BaseChangeAmountActions,
 	value: number
 }
 
 export const changeMoney = (state: GlobalStateInterface, updateState: (newState: DeepPartial<GlobalStateInterface>) => void) => (change: MoneyChange) => {
 	let newMoneyAmount: number
 	switch (change.action) {
-	case ChangeAmountActions.add:
+	case BaseChangeAmountActions.add:
 		newMoneyAmount = state.player.inventory.money + change.value
 		break
-	case ChangeAmountActions.subtract:
+	case BaseChangeAmountActions.subtract:
 		newMoneyAmount = state.player.inventory.money - change.value
 		break
 	}

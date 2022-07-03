@@ -1,18 +1,18 @@
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { ChangeAmountActions, DeepPartial } from '../types'
+import { BaseChangeAmountActions, DeepPartial } from '../types'
 
 export interface EnergyChange {
-	action: ChangeAmountActions,
+	action: BaseChangeAmountActions,
 	value: number
 }
 
 export const changeEnergy = (state: GlobalStateInterface, updateState: (newState: DeepPartial<GlobalStateInterface>) => void) => (change: EnergyChange) => {
 	let newEnergyAmount: number
 	switch (change.action) {
-	case ChangeAmountActions.add:
+	case BaseChangeAmountActions.add:
 		newEnergyAmount = Math.min(state.player.energy.currentValue + change.value, state.player.energy.maxValue)
 		break
-	case ChangeAmountActions.subtract:
+	case BaseChangeAmountActions.subtract:
 		newEnergyAmount = Math.max(state.player.energy.currentValue - change.value, state.player.energy.minValue)
 		break
 	}

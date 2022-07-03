@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { sceneNames } from '../..'
 import { AttributeKeys } from '../../../functions/attribute'
 import { useGlobalState } from '../../../GlobalStateProvider'
-import { ChangeAmountActions } from '../../../types'
+import { BaseChangeAmountActions } from '../../../types'
 import { images } from '../../../media/images'
 
 const WorkingBar = () => {
@@ -11,16 +11,16 @@ const WorkingBar = () => {
 	const working = () => {
 		if (checkIfEnoughEnergy(25)) {
 			changeEnergy({
-				action: ChangeAmountActions.subtract,
+				action: BaseChangeAmountActions.subtract,
 				value: 25
 			})
 			changeMoney({
-				action: ChangeAmountActions.add,
+				action: BaseChangeAmountActions.add,
 				value: 10 + getAttribute(AttributeKeys.charisma).currentLevel
 			})
 			changeAttributeXP({
 				attributeKey: AttributeKeys.charisma,
-				action: ChangeAmountActions.add,
+				action: BaseChangeAmountActions.add,
 				value: 1
 			})
 			addHours(3)

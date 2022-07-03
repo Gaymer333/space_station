@@ -4,14 +4,15 @@ import { sceneNames } from '../scenes'
 
 interface IChangeStageButtonProps {
 	sceneName: sceneNames,
-	disableCheck: boolean
+	buttonText: string,
+	disableCheck?: boolean
 }
 
 const ChangeStageButton = (props: IChangeStageButtonProps) => {
 	const { updateScene } = useGlobalState()
-	const { sceneName, disableCheck } = props
+	const { sceneName, buttonText, disableCheck = false } = props
 
-	return <button onClick={() => updateScene(sceneName)} disabled={disableCheck} >Work</button>
+	return <button onClick={() => updateScene(sceneName)} disabled={disableCheck} >{buttonText}</button>
 }
 
 export { ChangeStageButton }

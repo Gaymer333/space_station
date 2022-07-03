@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { ChangeAmountActions, DeepPartial } from '../types'
+import { BaseChangeAmountActions, DeepPartial } from '../types'
 
 export enum AttributeKeys {
 	'strength',
@@ -13,7 +13,7 @@ export enum AttributeKeys {
 
 export interface AttributeChange {
 	attributeKey: AttributeKeys,
-	action: ChangeAmountActions,
+	action: BaseChangeAmountActions,
 	value: number
 }
 
@@ -64,10 +64,10 @@ export const changeAttributeXP = (
 	const attribute = getAttribute(state)(change.attributeKey)
 	let newValue = attribute.xp
 	switch (change.action) {
-	case ChangeAmountActions.add:
+	case BaseChangeAmountActions.add:
 		newValue = attribute.xp + change.value
 		break
-	case ChangeAmountActions.subtract:
+	case BaseChangeAmountActions.subtract:
 		newValue = Math.max(attribute.xp - change.value, 0)
 		break
 

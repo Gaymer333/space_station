@@ -9,6 +9,7 @@ import { changeMoney, checkIfEnoughMoney, MoneyChange } from './functions/invent
 import { changeEnergy, checkIfEnoughEnergy, EnergyChange } from './functions/energy'
 import { Attribute, AttributeChange, AttributeKeys, changeAttributeXP, getAttribute } from './functions/attribute'
 import getDefaultGlobalState from './utils/getDefaultGlobalState'
+import { addLifeEvent, getLifeEvent, LifeEventAction, LifeEvents } from './functions/lifeEvent'
 
 export interface PlayerData {
 	firstName: string;
@@ -36,6 +37,7 @@ export interface GlobalStateInterface {
 	},
 	player: PlayerData,
 	events: Array<GameEvent>,
+	lifeEvents: LifeEvents,
 	stateUpdatedAt: Date
 }
 
@@ -57,6 +59,8 @@ interface GlobalStateHandlerInterface {
 	checkIfEnoughEnergy: (value: number) => boolean
 	addEvent: (event: GameEvent) => void
 	addUniqueEvent: (event: GameEvent) => void
+	getLifeEvent: (name: string) => number
+	addLifeEvent: (event: LifeEventAction) => void
 	removeEvent: (event: GameEvent) => void
 }
 
@@ -145,6 +149,8 @@ const GlobalStateProvider = ({
 		checkIfEnoughEnergy: checkIfEnoughEnergy(state),
 		addEvent: addEvent(state, updateState),
 		addUniqueEvent: addUniqueEvent(state, updateState),
+		getLifeEvent: getLifeEvent(state),
+		addLifeEvent: addLifeEvent(state, updateState),
 		removeEvent: removeEvent(state, updateState)
 	}
 

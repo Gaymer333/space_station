@@ -34,6 +34,7 @@ const getDefaultGlobalState = (): GlobalStateInterface => {
 			scene: sceneNames.pregame
 		},
 		events: [],
+		lifeEvents: {},
 		player: {
 			firstName: 'Max',
 			lastName: 'Power',

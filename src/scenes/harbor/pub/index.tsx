@@ -1,24 +1,23 @@
 import React from 'react'
 import { sceneNames } from '../..'
 import { ChangeStageButton } from '../../../components/Buttons'
-import { AttributeKeys } from '../../../functions/attribute'
 import { StatKeys } from '../../../functions/stat'
 import { useGlobalState } from '../../../GlobalStateProvider'
 import { getSoberingUpEvent } from '../../../prefabs/events'
-import { ChangeAmountActions } from '../../../types'
+import { BaseChangeAmountActions } from '../../../types'
 
 const HarborPub = () => {
-	const { state, updateScene, changeStat, checkIfEnoughMoney, changeMoney, addMins, addHours, changeEnergy, checkIfEnoughEnergy, addUniqueEvent, getAttribute, changeAttributeXP } = useGlobalState()
+	const { state, updateScene, changeStat, checkIfEnoughMoney, changeMoney, addMins, addHours, changeEnergy, checkIfEnoughEnergy, addUniqueEvent, getLifeEvent } = useGlobalState()
 
 	const drinkBeer = () => {
 		if (checkIfEnoughMoney(10)) {
 			changeStat({
 				statKey: StatKeys.alcohol,
-				action: ChangeAmountActions.add,
+				action: BaseChangeAmountActions.add,
 				value: 8
 			})
 			changeMoney({
-				action: ChangeAmountActions.add,
+				action: BaseChangeAmountActions.add,
 				value: -20
 			})
 			addMins(20)
@@ -26,31 +25,31 @@ const HarborPub = () => {
 		}
 	}
 
-	const workWaiter = () => {
-		if (checkIfEnoughEnergy(25)) {
-			changeEnergy({
-				action: ChangeAmountActions.subtract,
-				value: 25
-			})
-			changeMoney({
-				action: ChangeAmountActions.add,
-				value: 10 + getAttribute(AttributeKeys.charisma).currentLevel
-			})
-			changeAttributeXP({
-				attributeKey: AttributeKeys.charisma,
-				action: ChangeAmountActions.add,
-				value: 1
-			})
-			addHours(3)
-		}
-	}
-
 	const sleep = () => {
 		changeEnergy({
-			action: ChangeAmountActions.add,
+			action: BaseChangeAmountActions.add,
 			value: 50
 		})
 		addHours(4)
+	}
+
+	const gotJobStatus = getLifeEvent('gotJobInPub')
+
+	const JobOptions = () => {
+		if (gotJobStatus) {
+			return <>
+				<p>Work - Waiter - 25 Energy - 3 Hour</p>
+				<ChangeStageButton sceneName={sceneNames.harbor_pub_work_tables} disableCheck={!checkIfEnoughEnergy(25)} buttonText="Work" />
+				<br />
+				<p>Work - Bartender - 25 Energy - 3 Hour</p>
+				<ChangeStageButton sceneName={sceneNames.harbor_pub_work_bar} disableCheck={!checkIfEnoughEnergy(25)} buttonText="Work" />
+			</>
+		} else {
+			return <>
+				<p>Get a job</p>
+				<ChangeStageButton sceneName={sceneNames.harbor_pub_get_job} buttonText="Get a job" />
+			</>
+		}
 	}
 
 	return <>
@@ -63,11 +62,7 @@ const HarborPub = () => {
 		<p>Beer - 20 Buck</p>
 		<button onClick={drinkBeer} >Buy and drink</button>
 		<hr />
-		<p>Work - Waiter - 25 Energy - 3 Hour</p>
-		<ChangeStageButton sceneName={sceneNames.harbor_pub_work_tables} disableCheck={!checkIfEnoughEnergy(25)} />
-		<br />
-		<p>Work - Bartender - 25 Energy - 3 Hour</p>
-		<ChangeStageButton sceneName={sceneNames.harbor_pub_work_bar} disableCheck={!checkIfEnoughEnergy(25)} />
+		<JobOptions />
 		<hr />
 		<p>Sleep - 4 Hour - 50 Energy</p>
 		<button onClick={sleep} >Sleep</button>

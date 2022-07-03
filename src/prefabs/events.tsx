@@ -1,7 +1,7 @@
 import { GameEvent } from '../functions/event'
 import { getStat, StatKeys } from '../functions/stat'
 import { GlobalStateInterface } from '../GlobalStateProvider'
-import { ChangeAmountActions } from '../types'
+import { BaseChangeAmountActions } from '../types'
 
 export const getSoberingUpEvent = (state: GlobalStateInterface): GameEvent => {
 	return {
@@ -12,7 +12,7 @@ export const getSoberingUpEvent = (state: GlobalStateInterface): GameEvent => {
 		minuteInTheHour: state.time.mins,
 		changes: [{
 			statKey: StatKeys.alcohol,
-			action: ChangeAmountActions.subtract,
+			action: BaseChangeAmountActions.subtract,
 			value: 10
 		}],
 		deleteIf: (props) => {
